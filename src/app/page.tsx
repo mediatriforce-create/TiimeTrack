@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showLogin, setShowLogin] = useState(false)
   const [greeting, setGreeting] = useState('')
   const router = useRouter()
   const supabase = createClient()
@@ -45,7 +46,41 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-full flex bg-white font-sans selection:bg-indigo-500 selection:text-white overflow-hidden">
-      {/* Esquerda: Hero / Branding */}
+
+      {/* Mobile Landing Page (Only visible on Mobile when !showLogin) */}
+      <div className={`lg:hidden fixed inset-0 z-50 bg-indigo-900 flex flex-col justify-center px-8 transition-transform duration-500 ${showLogin ? '-translate-x-full' : 'translate-x-0'}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-900 opacity-90 z-10" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay" />
+
+        <div className="relative z-20 text-white space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-indigo-100 text-sm font-medium mb-6">
+              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping absolute"></span>
+              <span className="w-2 h-2 rounded-full bg-indigo-500 relative"></span>
+              Controle Inteligente
+            </div>
+            <h1 className="text-4xl font-extrabold tracking-tight leading-tight mb-4">
+              {greeting}. <br />
+              Seu tempo vale <span className="text-indigo-300">ouro</span>.
+            </h1>
+            <p className="text-indigo-100 text-lg max-w-xs">
+              Gerencie sua jornada e equipe com maestria, na palma da sua mão.
+            </p>
+          </div>
+
+          <div className="pt-8">
+            <button
+              onClick={() => setShowLogin(true)}
+              className="w-full flex items-center justify-center gap-2 py-4 bg-white text-indigo-900 rounded-xl font-bold text-lg shadow-xl shadow-indigo-900/50 active:scale-95 transition-all"
+            >
+              Fazer Login <ArrowRight className="w-5 h-5" />
+            </button>
+            <p className="text-center mt-6 text-indigo-300 text-sm">© 2024 TimeTrack Inc.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Left Side (Brand) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-indigo-900 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-900 opacity-90 z-10" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay" />
@@ -93,16 +128,13 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Direita: Login Form */}
+      {/* Login Form (Right Side) */}
       <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-24 bg-gray-50 relative overflow-y-auto w-full">
-        {/* Mobile Greeting */}
+        {/* Mobile Header (When form is visible) */}
         <div className="lg:hidden w-full max-w-md mb-8 space-y-2 animate-in slide-in-from-top-4 duration-700">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
-            TimeTrack
-          </div>
+          <button onClick={() => setShowLogin(false)} className="text-sm text-indigo-600 font-bold mb-2 hover:underline">← Voltar</button>
           <h1 className="text-3xl font-extrabold text-gray-900 leading-tight">
-            {greeting}. <br />
-            <span className="text-indigo-600">Vamos trabalhar?</span>
+            Entrar no <span className="text-indigo-600">Sistema</span>
           </h1>
         </div>
         <div className="w-full max-w-md space-y-10 bg-white p-10 rounded-2xl shadow-xl shadow-indigo-100/50">

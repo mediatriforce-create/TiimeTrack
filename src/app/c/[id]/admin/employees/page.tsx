@@ -677,8 +677,8 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                                                             ))}
                                                         </div>
                                                     </div>
-                                                    <p className="text-sm text-gray-600 mb-3 leading-snug">
-                                                        {issue.details.join(' | ')}
+                                                    <p className="text-sm text-gray-600 mb-3 leading-snug break-words whitespace-pre-line">
+                                                        {issue.details.join('\n')}
                                                     </p>
 
                                                     {issue.justification ? (
@@ -688,8 +688,8 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                                                                 setViewJustification(issue.justification)
                                                             }}
                                                             className={`w-full py-2 rounded-lg text-xs font-bold border transition-colors ${issue.justification.status === 'APPROVED' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                                    issue.justification.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                                        'bg-blue-50 text-blue-700 border-blue-200'
+                                                                issue.justification.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                                    'bg-blue-50 text-blue-700 border-blue-200'
                                                                 }`}
                                                         >
                                                             {issue.justification.status === 'PENDING' ? 'VER JUSTIFICATIVA (PENDENTE)' :
