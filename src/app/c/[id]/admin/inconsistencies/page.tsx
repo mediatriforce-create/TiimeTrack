@@ -218,7 +218,8 @@ export default function InconsistenciesPage({ params }: { params: Promise<{ id: 
             </div>
 
             {/* List */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Desktop Table */}
+            <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {filteredList.length === 0 ? (
                     <div className="p-12 text-center text-gray-500">
                         <AlertTriangle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
@@ -259,6 +260,45 @@ export default function InconsistenciesPage({ params }: { params: Promise<{ id: 
                             ))}
                         </tbody>
                     </table>
+                )}
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4 pb-20">
+                {filteredList.length === 0 ? (
+                    <div className="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500 border border-gray-200">
+                        <AlertTriangle className="w-10 h-10 mx-auto text-gray-300 mb-2" />
+                        <p>Nenhuma inconsistência.</p>
+                    </div>
+                ) : (
+                    filteredList.map(item => (
+                        <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <div className="font-bold text-gray-900 text-lg">{format(item.date, 'dd/MM/yyyy', { locale: ptBR })}</div>
+                                    <div className="text-xs text-gray-500 capitalize">{format(item.date, 'EEEE', { locale: ptBR })}</div>
+                                </div>
+                                <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${item.type === 'FALTA' ? 'bg-red-100 text-red-700' :
+                                        item.type === 'ATRASO' ? 'bg-amber-100 text-amber-700' :
+                                            'bg-orange-100 text-orange-700'
+                                    }`}>
+                                    {item.type}
+                                </span>
+                            </div>
+
+                            <div className="mb-3">
+                                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Colaborador</span>
+                                <div className="font-medium text-gray-900">{item.employeeName}</div>
+                            </div>
+
+                            <div className="pt-3 border-t border-gray-100">
+                                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-1">Detalhes</span>
+                                <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-lg break-words whitespace-pre-line leading-relaxed">
+                                    {item.details}
+                                </p>
+                            </div>
+                        </div>
+                    ))
                 )}
             </div>
         </div>
