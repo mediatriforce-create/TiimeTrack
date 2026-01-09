@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -11,8 +11,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [greeting, setGreeting] = useState('')
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const hour = new Date().getHours()
+    if (hour < 12) setGreeting('Bom dia')
+    else if (hour < 18) setGreeting('Boa tarde')
+    else setGreeting('Boa noite')
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,7 +94,17 @@ export default function LoginPage() {
       </div>
 
       {/* Direita: Login Form */}
-      <div className="flex-1 flex flex-col justify-center items-center p-8 sm:p-12 lg:p-24 bg-gray-50">
+      <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-24 bg-gray-50 relative overflow-y-auto w-full">
+        {/* Mobile Greeting */}
+        <div className="lg:hidden w-full max-w-md mb-8 space-y-2 animate-in slide-in-from-top-4 duration-700">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
+            TimeTrack
+          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 leading-tight">
+            {greeting}. <br />
+            <span className="text-indigo-600">Vamos trabalhar?</span>
+          </h1>
+        </div>
         <div className="w-full max-w-md space-y-10 bg-white p-10 rounded-2xl shadow-xl shadow-indigo-100/50">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Seja bem-vindo!</h2>
@@ -109,7 +127,6 @@ export default function LoginPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-sm font-semibold text-gray-700">Senha</label>
-                  <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline">Esqueceu?</a>
                 </div>
                 <input
                   type="password"

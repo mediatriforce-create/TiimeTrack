@@ -105,7 +105,28 @@ export default function AdminLayout({
                 </div>
             </header>
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
+            {/* Mobile Bottom Navigation */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div className="flex justify-around p-2">
+                    {navItems.map((item) => {
+                        const isActive = pathname === item.href
+                        const Icon = item.icon
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`flex flex-col items-center p-2 rounded-xl min-w-[60px] transition-all
+                                    ${isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 active:scale-95'}`}
+                            >
+                                <Icon className="w-5 h-5 mb-1" />
+                                <span className="text-[10px] font-bold truncate max-w-[70px]">{item.label}</span>
+                            </Link>
+                        )
+                    })}
+                </div>
+            </div>
+
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:mb-0 mb-20 animate-in fade-in duration-500">
                 {children}
             </main>
         </div>
