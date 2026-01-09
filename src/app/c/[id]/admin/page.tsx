@@ -206,19 +206,19 @@ export default function AdminDashboard({ params }: { params: Promise<{ id: strin
                             const isActive = employee.last_event === 'entry' || employee.last_event === 'return'
                             return (
                                 <li key={employee.id} className="px-6 py-5 hover:bg-indigo-50/30 transition-colors group">
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="flex items-center gap-4">
                                             <div className="flex-shrink-0">
                                                 <span className={`h-12 w-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-inner transition-colors ${isActive ? 'bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-700 ring-2 ring-indigo-200' : 'bg-gray-100 text-gray-400'}`}>
                                                     {employee.full_name.charAt(0).toUpperCase()}
                                                 </span>
                                             </div>
-                                            <div>
-                                                <div className="text-base font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">{employee.full_name}</div>
-                                                <div className="text-sm text-gray-500">{employee.email}</div>
+                                            <div className="min-w-0">
+                                                <div className="text-base font-bold text-gray-900 group-hover:text-indigo-700 transition-colors truncate">{employee.full_name}</div>
+                                                <div className="text-sm text-gray-500 truncate">{employee.email}</div>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-2">
+                                        <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 justify-between sm:justify-start w-full sm:w-auto mt-2 sm:mt-0">
                                             {getStatusBadge(employee.last_event)}
 
                                             {isActive && employee.last_time && (

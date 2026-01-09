@@ -464,8 +464,8 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Desktop Table */}
+            <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -520,7 +520,6 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                                                 <CalendarDays className="w-4 h-4" />
                                                 Escala
                                             </button>
-                                            {/* Removed Settings button as requested */}
                                         </td>
                                     </tr>
                                     {isExpanded && (
@@ -573,7 +572,6 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                                                                                     onClick={(e) => {
                                                                                         e.preventDefault()
                                                                                         e.stopPropagation()
-                                                                                        console.log('Opening justification', issue.justification)
                                                                                         setViewJustification(issue.justification)
                                                                                     }}
                                                                                     className={`text-xs font-bold px-3 py-1 rounded transition-colors cursor-pointer border ${issue.justification.status === 'APPROVED' ? 'bg-green-100 text-green-700 border-green-200 hover:bg-green-200' :
@@ -602,6 +600,113 @@ export default function EmployeesPage({ params }: { params: Promise<{ id: string
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4 pb-20">
+                {loading ? (
+                    <div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-600" /></div>
+                ) : filteredEmployees.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500 bg-white rounded-xl shadow-sm">Nenhum colaborador encontrado.</div>
+                ) : filteredEmployees.map(emp => {
+                    const isExpanded = expandedEmpId === emp.id
+                    const empIssues = dailyIssuesMap[emp.id] || []
+
+                    return (
+                        <div key={emp.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div className="p-4" onClick={() => toggleExpand(emp)}>
+                                <div className="flex justify-between items-start mb-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-lg">
+                                            {emp.full_name?.[0]}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-gray-900 text-lg">{emp.full_name}</div>
+                                            <div className="text-sm text-gray-500">{emp.email}</div>
+                                        </div>
+                                    </div>
+                                    {emp.schedule_type === 'fixed' ? (
+                                        <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold whitespace-nowrap">
+                                            {emp.fixed_start_time?.slice(0, 5)} - {emp.fixed_end_time?.slice(0, 5)}
+                                        </span>
+                                    ) : (
+                                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-bold">Flexível</span>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2 mt-4" onClick={e => e.stopPropagation()}>
+                                    <button
+                                        onClick={() => openShiftManager(emp)}
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-bold transition-colors border border-indigo-200"
+                                    >
+                                        <CalendarDays className="w-4 h-4" />
+                                        Escala
+                                    </button>
+                                    <button
+                                        onClick={() => toggleExpand(emp)}
+                                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-bold transition-colors border ${isExpanded ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-gray-50 text-gray-600 border-gray-200'}`}
+                                    >
+                                        <AlertTriangle className={`w-4 h-4 ${isExpanded ? 'text-amber-500' : 'text-gray-400'}`} />
+                                        Inconsistências
+                                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Mobile Inconsistencies List */}
+                            {isExpanded && (
+                                <div className="bg-gray-50 border-t border-gray-200 p-4 animate-in slide-in-from-top-2">
+                                    {loadingInconsistencies ? (
+                                        <div className="flex justify-center p-4 text-indigo-500"><Loader2 className="animate-spin" /></div>
+                                    ) : empIssues.length === 0 ? (
+                                        <div className="p-4 text-center text-green-600 bg-green-50 rounded-lg border border-green-100 flex flex-col items-center">
+                                            <Check className="w-6 h-6 mb-1" />
+                                            <span className="font-medium text-sm">Nenhuma inconsistência.</span>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {empIssues.map((issue, idx) => (
+                                                <div key={idx} className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="font-mono text-sm font-bold text-gray-900">{format(issue.date, 'dd/MM/yyyy')}</span>
+                                                        <div className="flex gap-1">
+                                                            {issue.types.map(t => (
+                                                                <span key={t} className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${t === 'FALTA' ? 'bg-red-100 text-red-700' : t === 'ATRASO' ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-700'}`}>
+                                                                    {t}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 mb-3 leading-snug">
+                                                        {issue.details.join(' | ')}
+                                                    </p>
+
+                                                    {issue.justification ? (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                setViewJustification(issue.justification)
+                                                            }}
+                                                            className={`w-full py-2 rounded-lg text-xs font-bold border transition-colors ${issue.justification.status === 'APPROVED' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                                    issue.justification.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                                        'bg-blue-50 text-blue-700 border-blue-200'
+                                                                }`}
+                                                        >
+                                                            {issue.justification.status === 'PENDING' ? 'VER JUSTIFICATIVA (PENDENTE)' :
+                                                                issue.justification.status === 'APPROVED' ? 'JUSTIFICATIVA APROVADA' : 'JUSTIFICATIVA REJEITADA'}
+                                                        </button>
+                                                    ) : (
+                                                        <div className="text-center py-1 text-xs text-gray-400 italic bg-gray-50 rounded">Sem justificativa</div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )
+                })}
             </div>
 
             {/* Shift Modal */}
