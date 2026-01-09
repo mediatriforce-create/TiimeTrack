@@ -17,10 +17,20 @@ export default function LoginPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    // 1. Greeting
     const hour = new Date().getHours()
     if (hour < 12) setGreeting('Bom dia')
     else if (hour < 18) setGreeting('Boa tarde')
     else setGreeting('Boa noite')
+
+    // 2. Auto-Redirect if Logged In
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.replace('/setup') // Redirects to portal/dashboard
+      }
+    }
+    checkSession()
   }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
